@@ -51,7 +51,6 @@ async function markupGallery() {
   try {
     const { data } = await photoApiService.fetchPhoto().then(hits => hits);
     const hits = data.hits;
-    console.log(photoApiService.page);
     const totalHit = data.totalHits;
     if (photoApiService.page === 2) {
       Notiflix.Notify.info(`Hooray! We found ${totalHit} images.`);
