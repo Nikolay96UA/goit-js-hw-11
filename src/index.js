@@ -51,9 +51,12 @@ async function markupGallery() {
   try {
     const { data } = await photoApiService.fetchPhoto().then(hits => hits);
     const hits = data.hits;
-
+    console.log(photoApiService.page);
     const totalHit = data.totalHits;
-    Notiflix.Notify.info(`Hooray! We found ${totalHit} images.`);
+    if (photoApiService.page === 2) {
+      Notiflix.Notify.info(`Hooray! We found ${totalHit} images.`);
+    }
+
     if (hits.length === 0) {
       throw new Error(
         Notiflix.Notify.failure(
@@ -62,7 +65,7 @@ async function markupGallery() {
       );
     }
 
-    if (hits.length === totalHit) {
+    if (photoApiService.page === 14) {
       Notiflix.Notify.failure(
         " We're sorry, but you've reached the end of search results."
       );

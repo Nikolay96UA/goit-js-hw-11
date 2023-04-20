@@ -15,13 +15,6 @@ class PhotoApiService {
     const fetchAPI = await axios.get(
       `${URL}/?key=${API_KEY}&q=${this.searchQuery}&${this.options}&per_page=40&page=${this.page}`
     );
-    // console.log(fetchAPI);
-    // fetch(
-    //   `${URL}/?key=${API_KEY}&q=${this.searchQuery}&${this.options}&per_page=40&page=${this.page}`
-    // );
-
-    // const data = await fetchAPI.json();
-    // console.log(data);
 
     this.incrementPage();
     return fetchAPI;
