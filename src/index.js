@@ -1,6 +1,9 @@
 import './css/styles.css';
 import { PhotoApiService } from './FetchPhoto';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const photoApiService = new PhotoApiService();
 
@@ -17,7 +20,8 @@ function handleScroll(ev) {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
   if (scrollTop + clientHeight >= scrollHeight - 5) {
-    fetchPhoto();
+    fetchPhotoCard();
+    onShow(ev);
   }
 }
 
@@ -46,17 +50,24 @@ async function fetchPhotoCard() {
 async function markupGallery() {
   try {
     const { data } = await photoApiService.fetchPhoto().then(hits => hits);
-    console.log(data);
     const hits = data.hits;
-    console.log(hits);
-    // const totalArray = data.totalHits;
-    // console.log(totalArray);
-    if (hits.length === 0);
-    throw new Error(
+
+    const totalHit = data.totalHits;
+    Notiflix.Notify.info(`Hooray! We found ${totalHit} images.`);
+    if (hits.length === 0) {
+      throw new Error(
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        )
+      );
+    }
+
+    if (hits.length === totalHit) {
       Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      )
-    );
+        " We're sorry, but you've reached the end of search results."
+      );
+      return;
+    }
     return hits.reduce((markup, hit) => markup + renderPhotoCard(hit), '');
   } catch (error) {
     onError(error);
@@ -73,8 +84,8 @@ function renderPhotoCard({
   downloads,
 }) {
   return `      
-        <div class="photo-card">
-        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+      <div class="photo-card">
+      <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"></a>
         <div class="info">
           <p class="info-item">
           <span>${likes}</span>
@@ -113,4 +124,18 @@ function onError(err) {
       'Sorry, there are no images matching your search query. Please try again.'
     )
   );
+}
+
+refs.boxInfo.addEventListener('click', onShow);
+
+function onShow(event) {
+  event.preventDefault();
+  if (event.target.nodeName !== 'IMG') {
+    return;
+  }
+
+  const lightbox = new SimpleLightbox('.gallery  a');
+  lightbox.refresh();
+
+  refs.boxInfo.removeEventListener('click', onShow);
 }
