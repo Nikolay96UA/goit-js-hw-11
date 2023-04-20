@@ -1,5 +1,7 @@
 const URL = 'https://pixabay.com/api/';
-const API_KEY = '35605207-c117f35bff793e16a667d50ae';
+const API_KEY = '35613677-637eb3f4735367263dbdc9146';
+
+const axios = require('axios/dist/browser/axios.cjs');
 
 class PhotoApiService {
   constructor() {
@@ -13,15 +15,16 @@ class PhotoApiService {
     const fetchAPI = await axios.get(
       `${URL}/?key=${API_KEY}&q=${this.searchQuery}&${this.options}&per_page=40&page=${this.page}`
     );
-
+    // console.log(fetchAPI);
     // fetch(
     //   `${URL}/?key=${API_KEY}&q=${this.searchQuery}&${this.options}&per_page=40&page=${this.page}`
     // );
 
-    const responseData = await fetchAPI.json();
+    // const data = await fetchAPI.json();
+    // console.log(data);
 
     this.incrementPage();
-    return responseData;
+    return fetchAPI;
   }
 
   incrementPage() {

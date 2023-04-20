@@ -31,32 +31,35 @@ function onSubmit(e) {
 
   photoApiService.resetPage();
   clearGallery();
-  fetchPhoto();
+  fetchPhotoCard();
 }
 
-async function fetchPhoto() {
+async function fetchPhotoCard() {
   try {
     const markup = await markupGallery();
     updateGallery(markup);
-  } catch (err) {
-    onError(err);
+  } catch (error) {
+    onError(error);
   }
 }
 
 async function markupGallery() {
   try {
-    const { hits } = await photoApiService.fetchPhoto();
-    if (hits.length === 0)
-      throw new Error(
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        )
-      );
-    return hits.reduce((markup, hits) => markup + renderPhotoCard(hits), '');
+    const { data } = await photoApiService.fetchPhoto().then(hits => hits);
+    console.log(data);
+    const hits = data.hits;
+    console.log(hits);
+    // const totalArray = data.totalHits;
+    // console.log(totalArray);
+    if (hits.length === 0);
+    throw new Error(
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      )
+    );
+    return hits.reduce((markup, hit) => markup + renderPhotoCard(hit), '');
   } catch (error) {
-    if (error) {
-      console.error(error);
-    }
+    onError(error);
   }
 }
 
@@ -105,5 +108,9 @@ function clearGallery() {
 function onError(err) {
   console.error(err);
   clearGallery();
-  updateGallery('<p>Not found!</p>');
+  updateGallery(
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    )
+  );
 }
